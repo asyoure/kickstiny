@@ -10,6 +10,8 @@ import SettingsButton from "../settings/SettingsButton.jsx";
 import FullscreenButton from "../fullscreen/FullscreenButton.jsx";
 import KickButton from "../watch/KickButton.jsx";
 import ChannelInfo from "../info/ChannelInfo.jsx";
+import RewindControls from "../rewind/RewindControls.jsx";
+import { useRewind } from "../rewind/useRewind.js";
 
 export default function ControlsBar({
   core,
@@ -32,7 +34,8 @@ export default function ControlsBar({
     videoContainer,
     videoElement,
   );
-  const { username, viewerCount, uptime } = useChannelInfo();
+  const { username, viewerCount, livestreamId } = useChannelInfo();
+  const rewind = useRewind(core, livestreamId);
 
   useKeyboardControls({
     onPlayPause: handlePlayPause,
@@ -72,7 +75,13 @@ export default function ControlsBar({
           <ChannelInfo
             username={username}
             viewerCount={viewerCount}
-            uptime={uptime}
+            rewound={Boolean(rewind.timeline?.rewound || rewind.error)}
+            onGoLive={rewind.goLive}
+          />
+          <RewindControls
+            {...rewind}
+            container={barRef.current}
+            shouldShow={shouldShow}
           />
         </div>
 
