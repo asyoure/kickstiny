@@ -3,9 +3,8 @@
 
 .controls-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: dgg.$space-2;
+  flex-direction: column;
+  gap: dgg.$space-1;
   background-color: dgg.$semantic-background-surface;
   border-radius: dgg.$semantic-radii-small;
   padding: dgg.$space-1;
@@ -22,25 +21,30 @@
     opacity: 1;
   }
 
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: dgg.$space-2;
+    position: relative;
+  }
+
   &__left {
     display: flex;
-    flex-shrink: 0;
     align-items: center;
     gap: 0.5rem;
   }
 
   &__center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex: 1;
-    min-width: 0;
-    gap: 0.75rem;
   }
 
   &__right {
     display: flex;
-    flex-shrink: 0;
     align-items: center;
     gap: 0.5rem;
   }
@@ -50,8 +54,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex: 1;
-  min-width: 0;
+  padding-inline: dgg.$space-2;
   font-size: 0.75rem;
 
   &__slider {
@@ -80,30 +83,17 @@
   }
 }
 
-@media (max-width: 960px) {
-  .controls-bar:has(.rewind-controls) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-
-    .controls-bar__center {
-      grid-column: 1 / -1;
-      grid-row: 2;
-    }
-
-    .controls-bar__right {
-      grid-column: 2;
-      grid-row: 1;
-    }
-  }
-}
-
 @media (max-width: 560px) {
-  .controls-bar,
-  .controls-bar__left,
-  .controls-bar__center,
-  .controls-bar__right,
-  .rewind-controls {
-    gap: 0.25rem;
+  // Make room for the compact live control beside the buttons.
+  .controls-bar:has(.rewind-controls) {
+    .controls-bar__center {
+      position: static;
+      transform: none;
+    }
+
+    .volume-controls .slider {
+      display: none !important;
+    }
   }
 
   .rewind-controls__time {

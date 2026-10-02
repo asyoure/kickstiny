@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { fetchChannelInfo, fetchViewerCount } from "../../utils/api.js";
-import { extractUsernameFromUrl } from "../../utils/format.js";
+import { formatUptime, extractUsernameFromUrl } from "../../utils/format.js";
 
 export function useChannelInfo() {
   const [username, setUsername] = useState(null);
   const [viewerCount, setViewerCount] = useState(null);
+  const [uptime, setUptime] = useState(null);
+  const [startTime, setStartTime] = useState(null);
   const [livestreamId, setLivestreamId] = useState(null);
 
   useEffect(() => {
@@ -34,6 +36,9 @@ export function useChannelInfo() {
         }
         if (data.livestream.viewer_count !== undefined) {
           setViewerCount(data.livestream.viewer_count);
+        }
+        if (data.livestream.start_time) {
+          setStartTime(data.livestream.start_time);
         }
 
         const updateViewerCount = async () => {
@@ -69,5 +74,14 @@ export function useChannelInfo() {
     };
   }, []);
 
-  return { username, viewerCount, livestreamId };
+  useEffect(() => {
+    if (!startTime) return;
+
+    const updateUptime = () => setUptime(formatUptime(startTime));
+    updateUptime();
+    const uptimeInterval = setInterval(updateUptime, 1000);
+    return () => clearInterval(uptimeInterval);
+  }, [startTime]);
+
+  return { username, viewerCount, uptime, livestreamId };
 }

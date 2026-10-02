@@ -9,9 +9,5 @@
     position: absolute;
     inset-inline: dgg.$space-4;
     inset-block: auto dgg.$space-4;
-
-    @media (max-width: 560px) {
-      inset-inline: dgg.$space-2;
-    }
   }
 }

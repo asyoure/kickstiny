@@ -88,6 +88,7 @@ test("channel discovery recovers after an initial HTTP failure and starts one vi
   assert.deepEqual(view.state(), {
     username: "lonerbox",
     viewerCount: 101,
+    uptime: null,
     livestreamId: 42,
   });
   await act(async () => t.mock.timers.tick(60000));

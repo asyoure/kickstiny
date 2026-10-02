@@ -1,5 +1,5 @@
 import React from "react";
-import { Users } from "lucide-react";
+import { Users, Clock } from "lucide-react";
 import NumberFlow from "@number-flow/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import clsx from "clsx";
@@ -8,6 +8,7 @@ import ControlsTooltip from "../ControlsTooltip.jsx";
 export default function ChannelInfo({
   username,
   viewerCount,
+  uptime,
   rewound,
   onGoLive,
 }) {
@@ -46,6 +47,12 @@ export default function ChannelInfo({
         <span className="channel-info__meta">
           <Users size={12} strokeWidth={3} />
           <NumberFlow value={viewerCount} />
+        </span>
+      )}
+      {uptime != null && (
+        <span className="channel-info__meta">
+          <Clock size={12} strokeWidth={3} />
+          {uptime}
         </span>
       )}
     </span>

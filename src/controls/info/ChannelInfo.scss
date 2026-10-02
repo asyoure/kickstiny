@@ -5,9 +5,6 @@
   display: flex;
   align-items: center;
   gap: dgg.$space-2;
-  flex-shrink: 0;
-  padding-inline: 0.75rem;
-  border-inline: 1px solid dgg.$semantic-border-default;
 
   &__username {
     border: 0;
@@ -88,8 +85,12 @@
 
 @media (max-width: 560px) {
   .channel-info {
-    padding-inline: 0.25rem 0;
-    border-inline-end: 0;
+    display: none;
+
+    // Kept as a compact control for returning to live from a rewind.
+    .controls-bar:has(.rewind-controls) & {
+      display: flex;
+    }
 
     &__username {
       justify-content: center;

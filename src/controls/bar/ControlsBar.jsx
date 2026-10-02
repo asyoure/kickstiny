@@ -34,7 +34,7 @@ export default function ControlsBar({
     videoContainer,
     videoElement,
   );
-  const { username, viewerCount, livestreamId } = useChannelInfo();
+  const { username, viewerCount, uptime, livestreamId } = useChannelInfo();
   const rewind = useRewind(core, livestreamId);
 
   useKeyboardControls({
@@ -56,55 +56,59 @@ export default function ControlsBar({
         onWheel={(event) => event.stopPropagation()}
         className={clsx("controls-bar", !shouldShow && "controls-bar--hidden")}
       >
-        <div className="controls-bar__left">
-          <PlayPauseButton
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-          />
+        <RewindControls {...rewind} />
 
-          <VolumeControls
-            volume={volume}
-            isMuted={isMuted}
-            onVolumeChange={handleVolumeChange}
-            onVolumeScroll={handleVolumeScroll}
-            onMuteToggle={handleMuteToggle}
-          />
-        </div>
+        <div className="controls-bar__row">
+          <div className="controls-bar__left">
+            <PlayPauseButton
+              isPlaying={isPlaying}
+              onPlayPause={handlePlayPause}
+            />
 
-        <div className="controls-bar__center">
-          <ChannelInfo
-            username={username}
-            viewerCount={viewerCount}
-            rewound={Boolean(rewind.timeline?.rewound || rewind.error)}
-            onGoLive={rewind.goLive}
-          />
-          <RewindControls {...rewind} />
-        </div>
+            <VolumeControls
+              volume={volume}
+              isMuted={isMuted}
+              onVolumeChange={handleVolumeChange}
+              onVolumeScroll={handleVolumeScroll}
+              onMuteToggle={handleMuteToggle}
+            />
+          </div>
 
-        <div className="controls-bar__right">
-          <SettingsButton
-            core={core}
-            container={barRef.current}
-            shouldShow={shouldShow}
-            clickToPlayPause={clickToPlayPause}
-            onClickToPlayChange={onClickToPlayChange}
-            showPlaybackSpeed={Boolean(
-              rewind.timeline?.rewound && !rewind.error,
-            )}
-            playbackRate={rewind.playbackRate}
-            onPlaybackRateChange={rewind.changePlaybackRate}
-          />
+          <div className="controls-bar__center">
+            <ChannelInfo
+              username={username}
+              viewerCount={viewerCount}
+              uptime={uptime}
+              rewound={Boolean(rewind.timeline?.rewound || rewind.error)}
+              onGoLive={rewind.goLive}
+            />
+          </div>
 
-          <FullscreenButton
-            isFullscreen={isFullscreen}
-            onFullscreenToggle={handleFullscreenToggle}
-          />
+          <div className="controls-bar__right">
+            <SettingsButton
+              core={core}
+              container={barRef.current}
+              shouldShow={shouldShow}
+              clickToPlayPause={clickToPlayPause}
+              onClickToPlayChange={onClickToPlayChange}
+              showPlaybackSpeed={Boolean(
+                rewind.timeline?.rewound && !rewind.error,
+              )}
+              playbackRate={rewind.playbackRate}
+              onPlaybackRateChange={rewind.changePlaybackRate}
+            />
 
-          <KickButton
-            username={username}
-            isPlaying={isPlaying}
-            handlePlayPause={handlePlayPause}
-          />
+            <FullscreenButton
+              isFullscreen={isFullscreen}
+              onFullscreenToggle={handleFullscreenToggle}
+            />
+
+            <KickButton
+              username={username}
+              isPlaying={isPlaying}
+              handlePlayPause={handlePlayPause}
+            />
+          </div>
         </div>
       </div>
     </Tooltip.Provider>
