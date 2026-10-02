@@ -9,6 +9,7 @@ export function useRewind(core, livestreamId) {
   const playerRef = useRef(null);
   const [timeline, setTimeline] = useState(null);
   const [error, setError] = useState(null);
+  const [playbackRate, setPlaybackRate] = useState(1);
 
   useEffect(() => {
     const username = extractUsernameFromUrl(window.location.href);
@@ -93,7 +94,10 @@ export function useRewind(core, livestreamId) {
   };
 
   const goLive = () => playerRef.current?.goLive();
-  const setPlaybackRate = (rate) => playerRef.current?.setPlaybackRate(rate);
+  const changePlaybackRate = (rate) => {
+    playerRef.current?.setPlaybackRate(rate);
+    setPlaybackRate(rate);
+  };
 
-  return { timeline, error, seek, goLive, setPlaybackRate };
+  return { timeline, error, seek, goLive, playbackRate, changePlaybackRate };
 }

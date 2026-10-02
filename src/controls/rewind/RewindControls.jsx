@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
-import PlaybackSpeedButton from "./PlaybackSpeedButton.jsx";
 
 function timestamp(seconds) {
   const total = Math.max(0, Math.floor(seconds));
@@ -9,14 +8,7 @@ function timestamp(seconds) {
   return `${hours}:${minutes}:${String(total % 60).padStart(2, "0")}`;
 }
 
-export default function RewindControls({
-  timeline,
-  error,
-  seek,
-  setPlaybackRate,
-  container,
-  shouldShow,
-}) {
+export default function RewindControls({ timeline, error, seek }) {
   const [preview, setPreview] = useState(null);
   const [dragging, setDragging] = useState(false);
   if (!timeline || timeline.end <= 0) return null;
@@ -71,15 +63,6 @@ export default function RewindControls({
           <span className="rewind-controls__time">{timestamp(position)}</span>
         </>
       )}
-      <span className="rewind-controls__speed">
-        {timeline.rewound && !error && (
-          <PlaybackSpeedButton
-            onChange={setPlaybackRate}
-            container={container}
-            shouldShow={shouldShow}
-          />
-        )}
-      </span>
     </div>
   );
 }

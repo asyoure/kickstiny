@@ -78,11 +78,7 @@ export default function ControlsBar({
             rewound={Boolean(rewind.timeline?.rewound || rewind.error)}
             onGoLive={rewind.goLive}
           />
-          <RewindControls
-            {...rewind}
-            container={barRef.current}
-            shouldShow={shouldShow}
-          />
+          <RewindControls {...rewind} />
         </div>
 
         <div className="controls-bar__right">
@@ -92,6 +88,11 @@ export default function ControlsBar({
             shouldShow={shouldShow}
             clickToPlayPause={clickToPlayPause}
             onClickToPlayChange={onClickToPlayChange}
+            showPlaybackSpeed={Boolean(
+              rewind.timeline?.rewound && !rewind.error,
+            )}
+            playbackRate={rewind.playbackRate}
+            onPlaybackRateChange={rewind.changePlaybackRate}
           />
 
           <FullscreenButton
