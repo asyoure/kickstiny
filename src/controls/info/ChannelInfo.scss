@@ -31,7 +31,6 @@
       }
 
       .channel-info__live-dot {
-        animation: none;
         background-color: dgg.$semantic-foreground-subtle;
       }
     }
@@ -52,8 +51,7 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: dgg.$semantic-radii-pill;
-    background-color: dgg.$palette-danger-7;
-    animation: pulse-red 5s ease-in-out infinite;
+    background-color: dgg.$palette-danger-9;
   }
 
   &__meta {
@@ -62,16 +60,6 @@
     display: flex;
     align-items: center;
     gap: dgg.$space-1;
-  }
-}
-
-@keyframes pulse-red {
-  0%,
-  100% {
-    background-color: dgg.$palette-danger-7;
-  }
-  50% {
-    background-color: dgg.$palette-danger-9;
   }
 }
 
