@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
 import Button from "../../components/Button.jsx";
+import { SEEK_STEP, timelineMax } from "./player.js";
 
 function timestamp(seconds) {
   const total = Math.max(0, Math.floor(seconds));
@@ -50,8 +51,8 @@ export default function RewindControls({ timeline, error, seek, goLive }) {
           <Slider.Root
             className="slider rewind-controls__slider"
             min={0}
-            max={timeline.end}
-            step={1}
+            max={timelineMax(timeline.end)}
+            step={SEEK_STEP}
             value={[Math.min(position, timeline.end)]}
             onPointerDownCapture={() => {
               setPreview(null);

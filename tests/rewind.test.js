@@ -3,6 +3,8 @@ import { EventEmitter } from "node:events";
 import test from "node:test";
 import {
   createRewindPlayer,
+  SEEK_STEP,
+  timelineMax,
   recordingDuration,
 } from "../src/controls/rewind/player.js";
 import { fetchCurrentRecording } from "../src/utils/api.js";
@@ -377,4 +379,38 @@ test("recording discovery reports failed HTTP requests", async (t) => {
     fetchCurrentRecording("lonerbox", 42),
     /Recording request failed: 403/,
   );
+});
+
+// Mirrors Radix Slider's snapping: round to the step grid from min, then clamp.
+const snap = (value, max) =>
+  Math.min(max, Math.max(0, Math.round(value / SEEK_STEP) * SEEK_STEP));
+
+test("one arrow-key step back from live leaves the live edge", () => {
+  for (const end of [600, 600.4, 602.4, 602.6, 7203.9, 7204.99]) {
+    const core = fakeCore();
+    const player = createRewindPlayer(core, "recording", assert.fail, () => {});
+    const max = timelineMax(end);
+    const target = snap(end - SEEK_STEP, max);
+    assert.equal(player.seek(target, end), true, `end ${end}`);
+    assert.equal(player.rewound, true);
+  }
+});
+
+test("dragging to the far right returns live whatever the timeline end", () => {
+  for (const end of [600, 600.4, 602.4, 602.6, 7203.9]) {
+    const core = fakeCore();
+    core.duration = end;
+    let wentLive = 0;
+    const player = createRewindPlayer(
+      core,
+      "recording",
+      () => wentLive++,
+      () => {},
+    );
+    player.seek(100, end);
+    const max = timelineMax(end);
+    assert.ok(max >= end);
+    assert.equal(player.seek(snap(max, max), end), false, `end ${end}`);
+    assert.equal(wentLive, 1, `end ${end}`);
+  }
 });

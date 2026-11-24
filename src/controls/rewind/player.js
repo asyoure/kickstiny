@@ -1,6 +1,18 @@
 // How close to the end of the recording counts as caught up with live.
 const LIVE_EDGE = 2;
 
+// Timeline step in seconds, for arrow keys and dragging. It must exceed
+// 2 × LIVE_EDGE: the slider snaps to this grid, so one step back from live can
+// land as little as half a step behind, which must still be outside LIVE_EDGE.
+export const SEEK_STEP = 5;
+
+// The slider snaps every value, including its max, to the step grid. Rounding
+// the max up keeps "dragged all the way right" at or past the end, which seek()
+// clamps and treats as live, instead of snapping it up to 2.5s short.
+export function timelineMax(end) {
+  return Math.ceil(end / SEEK_STEP) * SEEK_STEP;
+}
+
 // IVS uses this large finite duration for media whose length is not known yet.
 export function recordingDuration(duration) {
   return Number.isFinite(duration) && duration > 0 && duration < 2 ** 30
