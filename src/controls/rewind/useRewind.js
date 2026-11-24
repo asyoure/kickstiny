@@ -24,7 +24,13 @@ export function useRewind(core, livestreamId) {
 
     const abort = new AbortController();
     let retry;
+    let retryDelay = 60000;
     let progress;
+    // Back off, up to 15 minutes, for channels whose recording never appears.
+    const scheduleRetry = () => {
+      retry = setTimeout(discover, retryDelay);
+      retryDelay = Math.min(retryDelay * 2, 15 * 60000);
+    };
 
     const discover = async () => {
       try {
@@ -35,14 +41,20 @@ export function useRewind(core, livestreamId) {
         );
         if (abort.signal.aborted) return;
         if (!recording) {
-          retry = setTimeout(discover, 60000);
+          scheduleRetry();
           return;
         }
 
         const startedAt = Date.parse(
           recording.start_time.replace(" ", "T") + "Z",
         );
-        if (!Number.isFinite(startedAt)) return;
+        if (!Number.isFinite(startedAt)) {
+          console.warn(
+            "[Kickstiny] Unrecognized recording start time",
+            recording.start_time,
+          );
+          return;
+        }
         const player = createRewindPlayer(
           core,
           recording.source,
@@ -68,7 +80,7 @@ export function useRewind(core, livestreamId) {
       } catch (error) {
         if (!abort.signal.aborted) {
           console.warn("[Kickstiny] Recording not available", error);
-          retry = setTimeout(discover, 60000);
+          scheduleRetry();
         }
       }
     };

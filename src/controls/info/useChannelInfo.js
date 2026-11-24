@@ -17,6 +17,12 @@ export function useChannelInfo() {
 
     const abort = new AbortController();
     let retry;
+    let retryDelay = 60000;
+    // Back off, up to 15 minutes, while the channel is offline or failing.
+    const scheduleRetry = () => {
+      retry = setTimeout(loadChannelInfo, retryDelay);
+      retryDelay = Math.min(retryDelay * 2, 15 * 60000);
+    };
     let viewerCountInterval;
 
     const loadChannelInfo = async () => {
@@ -31,7 +37,7 @@ export function useChannelInfo() {
         const livestreamId = data.livestream?.id;
         setLivestreamId(livestreamId ?? null);
         if (!livestreamId) {
-          retry = setTimeout(loadChannelInfo, 60000);
+          scheduleRetry();
           return;
         }
         if (data.livestream.viewer_count !== undefined) {
@@ -60,7 +66,7 @@ export function useChannelInfo() {
       } catch (error) {
         if (!abort.signal.aborted) {
           console.error("[Kickstiny] Error fetching channel info", error);
-          retry = setTimeout(loadChannelInfo, 60000);
+          scheduleRetry();
         }
       }
     };

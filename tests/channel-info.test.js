@@ -163,3 +163,22 @@ test("a late channel response after unmount cannot start viewer polling", async 
   await act(async () => t.mock.timers.tick(180000));
   assert.equal(requests.length, 1);
 });
+
+test("channel discovery backs off while offline, up to 15 minutes", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout", "setInterval"] });
+  let infoRequests = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    infoRequests++;
+    return response({ ...channel, livestream: null });
+  });
+
+  await mountChannelInfo(t);
+  // Retries after 1, 2, 4, 8 and 15 minutes, then every 15 minutes.
+  for (const delay of [60, 120, 240, 480, 900, 900]) {
+    const before = infoRequests;
+    await act(async () => t.mock.timers.tick(delay * 1000 - 1));
+    assert.equal(infoRequests, before, `retried before ${delay}s`);
+    await act(async () => t.mock.timers.tick(1));
+    assert.equal(infoRequests, before + 1, `no retry at ${delay}s`);
+  }
+});
