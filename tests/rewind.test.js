@@ -386,7 +386,7 @@ const snap = (value, max) =>
   Math.min(max, Math.max(0, Math.round(value / SEEK_STEP) * SEEK_STEP));
 
 test("one arrow-key step back from live leaves the live edge", () => {
-  for (const end of [600, 600.4, 602.4, 602.6, 7203.9, 7204.99]) {
+  for (const end of [600, 600.4, 602, 602.4, 602.6, 7203.9, 7204.99]) {
     const core = fakeCore();
     const player = createRewindPlayer(core, "recording", assert.fail, () => {});
     const max = timelineMax(end);
@@ -397,7 +397,7 @@ test("one arrow-key step back from live leaves the live edge", () => {
 });
 
 test("dragging to the far right returns live whatever the timeline end", () => {
-  for (const end of [600, 600.4, 602.4, 602.6, 7203.9]) {
+  for (const end of [600, 600.4, 602, 602.4, 602.6, 7203.9]) {
     const core = fakeCore();
     core.duration = end;
     let wentLive = 0;

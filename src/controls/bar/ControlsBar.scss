@@ -13,10 +13,18 @@
   position: relative;
   @include transitions.create-transition(opacity, enter-exit);
 
-  // A hidden bar must not take taps meant to reveal it (e.g. starting a
-  // rewind on phones), but stays usable while it holds keyboard focus.
-  &--hidden:not(:has(:focus-visible)) {
+  &--hidden {
     opacity: 0;
+  }
+
+  &:has(:focus-visible) {
+    opacity: 1;
+  }
+
+  // A hidden bar must not take taps meant to reveal it (e.g. starting a
+  // rewind on phones), but stays usable while it holds keyboard focus. Kept
+  // separate so browsers without :has() still hide the bar.
+  &--hidden:not(:has(:focus-visible)) {
     pointer-events: none;
 
     // .slider sets pointer-events: auto, which would override the bar's none.

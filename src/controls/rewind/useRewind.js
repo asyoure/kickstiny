@@ -48,13 +48,7 @@ export function useRewind(core, livestreamId) {
         const startedAt = Date.parse(
           recording.start_time.replace(" ", "T") + "Z",
         );
-        if (!Number.isFinite(startedAt)) {
-          console.warn(
-            "[Kickstiny] Unrecognized recording start time",
-            recording.start_time,
-          );
-          return;
-        }
+        if (!Number.isFinite(startedAt)) return;
         const player = createRewindPlayer(
           core,
           recording.source,
