@@ -86,13 +86,30 @@ export function useControlsVisibility(containerRef, controlsBarRef) {
       }
     };
 
+    // Touch drags fire no mouse events, so treat pointer contact with the bar
+    // as activity and only restart the inactivity timer once it ends.
+    const handleControlsPointerDown = () => {
+      setIsInactive(false);
+      clearInactivityTimer();
+    };
+
+    const handleControlsPointerUp = () => {
+      startInactivityTimer();
+    };
+
     const controlsBar = controlsBarRef.current;
     controlsBar.addEventListener("mouseenter", handleControlsMouseEnter);
     controlsBar.addEventListener("mouseleave", handleControlsMouseLeave);
+    controlsBar.addEventListener("pointerdown", handleControlsPointerDown);
+    controlsBar.addEventListener("pointerup", handleControlsPointerUp);
+    controlsBar.addEventListener("pointercancel", handleControlsPointerUp);
 
     return () => {
       controlsBar.removeEventListener("mouseenter", handleControlsMouseEnter);
       controlsBar.removeEventListener("mouseleave", handleControlsMouseLeave);
+      controlsBar.removeEventListener("pointerdown", handleControlsPointerDown);
+      controlsBar.removeEventListener("pointerup", handleControlsPointerUp);
+      controlsBar.removeEventListener("pointercancel", handleControlsPointerUp);
     };
   }, [startInactivityTimer, clearInactivityTimer]);
 

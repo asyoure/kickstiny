@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
 import Button from "../../components/Button.jsx";
 
@@ -12,7 +12,14 @@ function timestamp(seconds) {
 export default function RewindControls({ timeline, error, seek, goLive }) {
   const [preview, setPreview] = useState(null);
   const [dragging, setDragging] = useState(false);
+  const thumbRef = useRef(null);
   if (!timeline || timeline.end <= 0) return null;
+
+  // The slider focuses its thumb on press. After a touch, drop that focus so
+  // it can't keep a hidden bar on screen; mice keep it for arrow keys.
+  const releaseTouchFocus = (event) => {
+    if (event.pointerType !== "mouse") thumbRef.current?.blur();
+  };
 
   const position = dragging
     ? (preview ?? timeline.position)
@@ -50,21 +57,26 @@ export default function RewindControls({ timeline, error, seek, goLive }) {
               setPreview(null);
               setDragging(true);
             }}
-            onPointerUp={() => setDragging(false)}
+            onPointerUp={(event) => {
+              setDragging(false);
+              releaseTouchFocus(event);
+            }}
             onValueChange={([value]) => setPreview(value)}
             onValueCommit={([value]) => {
               seek(value);
               setDragging(false);
             }}
-            onPointerCancel={() => {
+            onPointerCancel={(event) => {
               setDragging(false);
               setPreview(null);
+              releaseTouchFocus(event);
             }}
           >
             <Slider.Track className="slider__track">
               <Slider.Range className="slider__range" />
             </Slider.Track>
             <Slider.Thumb
+              ref={thumbRef}
               className="slider__thumb"
               aria-label="Rewind current broadcast"
               aria-valuetext={`${timestamp(position)} of ${timestamp(timeline.end)}`}
