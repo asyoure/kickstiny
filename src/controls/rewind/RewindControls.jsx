@@ -22,9 +22,11 @@ export default function RewindControls({ timeline, error, seek, goLive }) {
     if (event.pointerType !== "mouse") thumbRef.current?.blur();
   };
 
-  const position = dragging
-    ? (preview ?? timeline.position)
-    : timeline.position;
+  // The slider max is rounded up past the end, so clamp what it reports.
+  const position = Math.min(
+    dragging ? (preview ?? timeline.position) : timeline.position,
+    timeline.end,
+  );
   return (
     <div className="rewind-controls">
       {error ? (
@@ -53,7 +55,7 @@ export default function RewindControls({ timeline, error, seek, goLive }) {
             min={0}
             max={timelineMax(timeline.end)}
             step={SEEK_STEP}
-            value={[Math.min(position, timeline.end)]}
+            value={[position]}
             onPointerDownCapture={() => {
               setPreview(null);
               setDragging(true);
